@@ -39,7 +39,8 @@ class bag{
         ~bag(){
              delete head,tail,cursor;
         }
-        void list_head_insert(int i,node*previous_ptr){
+        
+        void list_head_insert(int i){
             node* new_node=new node();
             new_node->data=i;
             new_node->prev=head->next->prev;
@@ -48,6 +49,8 @@ class bag{
             head->next=new_node;
             return ;
         }
+
+        //head,tail 노드를 제외한 n번째 노드 다음인 n+1에 생성된다.
         void insertInBag_next_node(int i,node*preivous_ptr){
             node* new_node=new node();
             if(preivous_ptr->next==tail){
@@ -65,16 +68,17 @@ class bag{
             new_node->prev=preivous_ptr;
             return ;
         }
-        node* list_search(node* head_ptr, const int & target){
+        void list_search(node* head_ptr, const int & target){
             node* cursor;
             cursor=head_ptr;
+            int i=0;
             while(cursor->next->next!=nullptr){
                 if(target==cursor->data)
-                    
-                    return cursor;
+                    cout<<i<<"번째 노드에 "<<target<<"data가 있습니다"<<endl;
                 cursor=cursor->next;
+                i+=1;
             }
-            return nullptr;
+            
         }
         
         int list_lenght()const {
@@ -105,6 +109,7 @@ class bag{
             return cursor;
         }
         void list_head_remove(node*head_ptr){
+            assert(head_ptr->next!=this->tail);
             node*delete_ptr;
             delete_ptr=head_ptr->next;
             head_ptr->next=head_ptr->next->next;
@@ -136,7 +141,7 @@ class bag{
                 return;
             }
             node*ptr=head_ptr;
-            list_head_insert(source_ptr->next->data,ptr);
+            list_head_insert(source_ptr->next->data);
             source_ptr=source_ptr->next;
             while(source_ptr->next->next!=nullptr){
                 insertInBag_next_node(source_ptr->next->data,ptr->next);
@@ -144,25 +149,30 @@ class bag{
                 source_ptr=source_ptr->next;
             }
         }
-        void sort_list(node* head_ptr){
-            int a=this->list_lenght();
-            int *b=new int[a];
-            for(int i=0;i<a;i++){
-                b[i]=head_ptr->next->data;
-                head_ptr=head_ptr->next;
+        int count(int i){
+            int t=0;
+            node* p1=this->head;
+
+            while(p1->next->next!=nullptr){
+                if(i==p1->next->data){
+                    t+=1;
+                }
+                p1=p1->next;
             }
-            sort(b,b+a);
-            bag*bag_c=new bag();
-            node*ptr=bag_c->head;
-            int i=0;
-            bag_c->list_head_insert(b[0],ptr);
-            for(int i=1;i<a;i++){
-                ptr=ptr->next;
-                bag_c->insertInBag_next_node(b[i],ptr);
+            return t;
+        }
+        void sort_list(node*head_ptr){
+            int N=this->list_lenght();
+            int temp=0;
+            for(int i=1;i<N;i++){
+                for(int j=i+1;j<N+1;j++){
+                    if((this->list_locate(head_ptr,i)->data)>this->list_locate(head_ptr,j)->data){
+                        temp=this->list_locate(head_ptr,i)->data;
+                        this->list_locate(head_ptr,i)->data=this->list_locate(head_ptr,j)->data;
+                        this->list_locate(head_ptr,j)->data=temp;
+                    }
+                }
             }
-            this->list_clear(this->head);
-            this->list_copy(bag_c->head,this->head);
-            
         }
 
         bag(const bag& source){
@@ -181,7 +191,7 @@ class bag{
         void operator+=(const bag& addend){
             node*ptr=this->head;
             node*ptr1=this->head->next->next;
-            this->list_head_insert(addend.head->next->data,ptr);
+            this->list_head_insert(addend.head->next->data);
             for(int i=0;i<addend.list_lenght()-1;i++){
                 ptr=ptr->next;
                 this->insertInBag_next_node(ptr1->data,ptr);
@@ -207,7 +217,7 @@ class bag{
             }
             return false;
         }
-         bool operator==(const bag&this2){
+        bool operator==(const bag&this2){
             int lenght;
             node*ptr,*ptr2;
             ptr=this->head->next;
@@ -225,59 +235,86 @@ class bag{
                 ptr2=ptr2->next;
             }
             return true;
-        }
+    }
 };
 
 
 int main(){
     bag bag1;
-    bag bag2;
     bag bag3;
     bag1.insertInBag_next_node(1,bag1.head);
+    bag1.printAll(); cout<<"첫번째 출력"<<endl;
+    bag1.insertInBag_next_node(8,bag1.list_locate(bag1.head,1));
+    bag1.printAll(); cout<<"두번째 출력"<<endl;
     bag1.insertInBag_next_node(5,bag1.list_locate(bag1.head,1));
-    bag1.insertInBag_next_node(2,bag1.list_locate(bag1.head,2));
-    bag1.insertInBag_next_node(4,bag1.list_locate(bag1.head,3));
-    bag1.insertInBag_next_node(7,bag1.list_locate(bag1.head,4));
+    bag1.printAll(); cout<<"세번째 출력"<<endl;
+    bag1.insertInBag_next_node(11,bag1.list_locate(bag1.head,2));
+    bag1.printAll(); cout<<"네번째 출력"<<endl;
+    bag1.insertInBag_next_node(5,bag1.list_locate(bag1.head,3));
+    bag1.printAll(); cout<<"다섯번째 출력"<<endl;
+    bag1.insertInBag_next_node(-11,bag1.list_locate(bag1.head,4));
+    bag1.printAll(); cout<<"여섯번째 출력"<<endl;
     bag1.insertInBag_next_node(1,bag1.list_locate(bag1.head,5));
-    bag1.insertInBag_next_node(9,bag1.list_locate(bag1.head,6));
-    bag1.insertInBag_next_node(8,bag1.list_locate(bag1.head,7));
-    //bag1.printAll();
-    bag bag4(bag1);
-    //cout<<(bag1!=bag4);
-    bool torf=bag1==bag4;
-    cout<< torf;
-    // bag4+=bag1;
-    // bag4.printAll();
-    // bag bag4(bag1);
-    // bag4.printAll();
-    // bag2=bag1;
-    // bag2.printAll();
-    //bag2.list_copy(bag1.head,bag2.head);
-    // bag2.list_copy(bag1.head,bag2.head);
-    // bag2.printAll();
-    // bag1.sort_list(bag1.head);
-    // bag1.printAll();
-    //bag bag4=bag1;
+    bag1.printAll(); cout<<"일곱번째 출력"<<endl;
+    bag1.insertInBag_next_node(-9,bag1.list_locate(bag1.head,7));
+    bag1.printAll(); cout<<"여덟번째 출력"<<endl;
+    bag1.list_head_insert(9);            //////////////////// head insert 임@@@@@@@@@@@@
+    bag1.printAll(); cout<<"아홉번째 출력 head insert!"<<endl;
+    bag1.insertInBag_next_node(2,bag1.list_locate(bag1.head,9));
+    bag1.printAll(); cout<<"열번째 출력"<<endl;
+    bag1.insertInBag_next_node(-99,bag1.list_locate(bag1.head,9));
+    bag1.printAll(); cout<<"열한번째 출력"<<endl;
+    bag1.list_head_remove(bag1.head);
+    bag1.printAll(); cout<<"head_remove 실행결과"<<endl;
+    bag1.list_search(bag1.head,5);
+    cout<<"bag1의 길이는"<<bag1.list_lenght()<<endl;
+    bag1.insertInBag_next_node(-98,bag1.list_locate(bag1.head,9));
+    bag1.printAll(); cout<<"열두번째 출력"<<endl;
+    bag1.list_remove(bag1.list_locate(bag1.head,7));
+    bag1.printAll(); cout<<"bag1의 7번째 노드를 삭제하였습니다"<<endl;
+    bag3.list_copy(bag1.head,bag3.head);
+    bag3.printAll(); cout<<"bag3이 bag1의 노드를 카피하였습니다"<<endl;
+    cout<<"bag1의 숫자5는 "<<bag1.count(5)<<"개 만큼 들어있습니다"<<endl;
+    cout<<"bag1의 정렬전은 ";bag1.printAll(); cout<<endl;
+    bag1.sort_list(bag1.head);
+    cout<<"bag1의 오름차순정렬 후는 ";bag1.printAll(); cout<<endl;
+    cout<<"bag2의 복사 생성자 호출"<<endl;
+    bag bag2(bag1);
+    bag2.printAll(); cout<<"bag2 모두 출력"<<endl;
 
-    // bag1.list_head_remove(bag1.head);
-    // bag1.printAll();
-    // cout<<bag1.list_lenght();
-    // bag1.list_clear(bag1.head);
-    // cout<<bag1.list_lenght();
-    // bag1.insertInBag_next_node(1,bag1.head);
-    // cout<<endl;
-    // bag1.printAll();
-    // cout<<bag1.list_lenght();
-    //bag1.printAll();
-    // a=bag1.list_search(bag1.head,2);
-    // bag1.list_remove(a);
-    // a=bag1.list_locate(bag1.head,5);
-    // cout<<a->data<<endl;
-    // bag1.list_remove(bag1.list_locate(bag1.head,4));
-    // bag1.printAll();
-    // bag1.printAll();
-    // bag1.list_head_insert(10,bag1.head);
-    // cout<<endl;
-    // bag1.printAll();
+    bag bag4;
+    cout<<"bag4 대상으로 연산자 '=' 오버로딩 태스트 후 bag4 출력 ";
+    bag4=bag1; bag4.printAll(); cout<<endl;
+    cout<<"bag4 대상으로 연산자 '+=' 오버로딩 태스트 후 bag4 출력";
+    bag4+=bag1; bag4.printAll(); cout<<endl;
+
+
+    bag bag5;// == =! 테스트 위해 생성
+
+
+    bag5.insertInBag_next_node(1,bag5.head);
+    bag5.insertInBag_next_node(5,bag5.head);
+    bag5.insertInBag_next_node(-9,bag5.head);
+    bag5.insertInBag_next_node(2,bag5.head);
+    bag5.insertInBag_next_node(1,bag5.head);
+    bag5.insertInBag_next_node(7,bag5.head);
+    bag5.insertInBag_next_node(1,bag5.head);
+
+    bool torf=bag5!=bag4;
+    cout<<"bag5!=bag1 의 연산결과 ";
+    cout<<torf; cout<<endl;
+    torf=bag5==bag1;
+    cout<<"bag5==bag1 의 연산결과 ";
+    cout<<torf; cout<<endl;
+
+    bag bag6;
+    bag6.list_copy(bag1.head,bag6.head);
+    torf=bag6==bag1;
+    cout<<"bag6==bag1 의 연산결과 ";
+    cout<<torf; cout<<endl;
+    torf=bag6!=bag1;
+    cout<<"bag6!=bag1 의 연산결과 ";
+    cout<<torf; cout<<endl;
+
     return 0;
 }
