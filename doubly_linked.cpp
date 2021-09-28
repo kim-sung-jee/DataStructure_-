@@ -39,7 +39,7 @@ class bag{
         ~bag(){
              delete head,tail,cursor;
         }
-        
+        //헤드노드가 직전으로 즉 맨 앞 노드로 삽입
         void list_head_insert(int i){
             node* new_node=new node();
             new_node->data=i;
@@ -68,6 +68,7 @@ class bag{
             new_node->prev=preivous_ptr;
             return ;
         }
+        //특정 데이터가 있는지 검사
         void list_search(node* head_ptr, const int & target){
             node* cursor;
             cursor=head_ptr;
@@ -80,7 +81,7 @@ class bag{
             }
             
         }
-        
+        //노드의 길이를 잰다
         int list_lenght()const {
             int i=0;
             node* p1=this->head;
@@ -92,13 +93,19 @@ class bag{
             
             return i;
         }
+        //전체 노드 출력
         void printAll()const {
             node* p1=head;
+            if(head->next==tail){
+                cout<<"길이는 0입니다";
+            }
             while(p1->next->next!=nullptr){
                 cout<<p1->next->data<<" ";
                 p1=p1->next;
             }
         }
+
+        // n번째 노드의 주솟값을 반환하는 함수이다.
         node*list_locate(node *head_ptr,size_t position){
             node*cursor=head_ptr;
             assert(0<position);
@@ -108,6 +115,7 @@ class bag{
             }   
             return cursor;
         }
+        //맨앞 노드를 삭제
         void list_head_remove(node*head_ptr){
             assert(head_ptr->next!=this->tail);
             node*delete_ptr;
@@ -116,6 +124,7 @@ class bag{
             head_ptr->next->next->prev=head_ptr;
             delete delete_ptr;
         }
+        //list_locate으로 반환 받은 값을 이용하여 특정 인덱스의 노드 삭제
         void list_remove(node*ptr){
             node* remove_ptr;
             remove_ptr=ptr;
@@ -123,6 +132,7 @@ class bag{
             remove_ptr->next->prev=remove_ptr->prev;
             delete remove_ptr;
         }
+        // head,tail을 제외한 노드들 삭제
         void list_clear(node *head_ptr){
             int i=0;
             int t=this->list_lenght();
@@ -136,6 +146,7 @@ class bag{
             this->list_remove(head->next);
             
         }
+        // 노드들 카피하는 함수
         void list_copy(const node*source_ptr,node*&head_ptr){
             if(source_ptr->next->next==nullptr){
                 return;
@@ -149,6 +160,7 @@ class bag{
                 source_ptr=source_ptr->next;
             }
         }
+        // 특정 데이터가 몇개의 노드에 들어있는지 세는 함수
         int count(int i){
             int t=0;
             node* p1=this->head;
@@ -161,6 +173,7 @@ class bag{
             }
             return t;
         }
+        //오름차순 정렬함수 배열안씀
         void sort_list(node*head_ptr){
             int N=this->list_lenght();
             int temp=0;
@@ -174,7 +187,7 @@ class bag{
                 }
             }
         }
-
+        //복사 생성자
         bag(const bag& source){
             head=new Node();
             tail=new Node();
@@ -184,10 +197,12 @@ class bag{
             tail->next=nullptr;
             this->list_copy(source.head,this->head);
         }
+        // =연산자 오버로딩
         void operator=(const bag&source){
             list_clear(head);
             list_copy(source.head,this->head);   
         }
+        // += 연산자 오버로딩
         void operator+=(const bag& addend){
             node*ptr=this->head;
             node*ptr1=this->head->next->next;
@@ -198,6 +213,7 @@ class bag{
                 ptr1=ptr1->next;
             }
         }
+        // =! 연산자 오버로딩
         bool operator!=(const bag&this2){
             int lenght;
             node*ptr,*ptr2;
@@ -217,6 +233,7 @@ class bag{
             }
             return false;
         }
+        // ==연산자 오버로딩
         bool operator==(const bag&this2){
             int lenght;
             node*ptr,*ptr2;
@@ -258,26 +275,43 @@ int main(){
     bag1.printAll(); cout<<"일곱번째 출력"<<endl;
     bag1.insertInBag_next_node(-9,bag1.list_locate(bag1.head,7));
     bag1.printAll(); cout<<"여덟번째 출력"<<endl;
+
     bag1.list_head_insert(9);            //////////////////// head insert 임@@@@@@@@@@@@
     bag1.printAll(); cout<<"아홉번째 출력 head insert!"<<endl;
+
     bag1.insertInBag_next_node(2,bag1.list_locate(bag1.head,9));
     bag1.printAll(); cout<<"열번째 출력"<<endl;
     bag1.insertInBag_next_node(-99,bag1.list_locate(bag1.head,9));
     bag1.printAll(); cout<<"열한번째 출력"<<endl;
+
     bag1.list_head_remove(bag1.head);
     bag1.printAll(); cout<<"head_remove 실행결과"<<endl;
-    bag1.list_search(bag1.head,5);
+
+    bag1.list_search(bag1.head,5);  //list_search실행
+
     cout<<"bag1의 길이는"<<bag1.list_lenght()<<endl;
+
     bag1.insertInBag_next_node(-98,bag1.list_locate(bag1.head,9));
     bag1.printAll(); cout<<"열두번째 출력"<<endl;
+
     bag1.list_remove(bag1.list_locate(bag1.head,7));
     bag1.printAll(); cout<<"bag1의 7번째 노드를 삭제하였습니다"<<endl;
+
     bag3.list_copy(bag1.head,bag3.head);
     bag3.printAll(); cout<<"bag3이 bag1의 노드를 카피하였습니다"<<endl;
+
+    bag3.printAll();
+    cout<<"bag3의 list_clear 함수 호출 전"<<endl;
+    bag3.list_clear(bag3.head);
+    bag3.printAll(); cout<<"bag3의 list_clear 함수 호출 후"<<endl;
+
+
     cout<<"bag1의 숫자5는 "<<bag1.count(5)<<"개 만큼 들어있습니다"<<endl;
+
     cout<<"bag1의 정렬전은 ";bag1.printAll(); cout<<endl;
     bag1.sort_list(bag1.head);
     cout<<"bag1의 오름차순정렬 후는 ";bag1.printAll(); cout<<endl;
+
     cout<<"bag2의 복사 생성자 호출"<<endl;
     bag bag2(bag1);
     bag2.printAll(); cout<<"bag2 모두 출력"<<endl;
@@ -289,7 +323,7 @@ int main(){
     bag4+=bag1; bag4.printAll(); cout<<endl;
 
 
-    bag bag5;// == =! 테스트 위해 생성
+    bag bag5; // == =! 테스트 위해 생성
 
 
     bag5.insertInBag_next_node(1,bag5.head);
