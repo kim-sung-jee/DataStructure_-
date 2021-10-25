@@ -6,7 +6,7 @@ using namespace std;
 int main(){
 
     int N;
-    cin>>N;
+    cin>>N; 
     int count=0;
     int A[3];
     for(int i=1;i<N+1;i++){
