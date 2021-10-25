@@ -30,4 +30,4 @@ int main(){
     sort(array2,array2+N-1);
     cout<<array2[N-2];
 
-}
+}   
