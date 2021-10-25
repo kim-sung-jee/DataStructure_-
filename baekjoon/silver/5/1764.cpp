@@ -50,3 +50,4 @@ int main(){
     }
     cout<<c[t-1];
 }
+ 
