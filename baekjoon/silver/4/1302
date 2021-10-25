@@ -1,0 +1,74 @@
+#include<iostream>
+#include<list>
+#include<algorithm>
+using namespace std;
+
+int main(){
+
+    int N;
+    cin>>N;
+    list<string> list1;
+    list<string> list2;
+    string a;
+    for(int i=0;i<N;i++){
+        cin>>a;
+        list1.push_back(a);
+    }
+    list2=list1;
+    list1.sort();
+    list1.unique();// 근처 있는것만...
+    int array[list1.size()];
+    string array2[list1.size()];
+    int count=0;
+    string temp;
+   
+    for(int i=0;i<list1.size();i++){
+        for(int t=0;t<list2.size();t++){
+            if(list1.front()==list2.front()){
+                count++;
+                
+            }
+            temp=list2.front();
+            list2.pop_front();
+            list2.push_back(temp);
+        }
+        array2[i]=list1.front();
+        list1.push_back(list1.front());
+        list1.pop_front();
+        
+        array[i]=count;
+        
+        count=0;
+    }
+    
+    int *array5=new int[list1.size()];
+    for(int i=0;i<list1.size();i++){
+        array5[i]=array[i];
+    }
+  
+    sort(array,array+list1.size());
+    
+    int max=array[list1.size()-1];
+   
+    int oo=0;
+    int *array3=new int[list1.size()];
+    
+    for(int z=0;z<list1.size();z++){
+        if(array5[z]==max){
+            array3[oo]=z;
+            oo+=1;
+        }
+    }
+    
+    //array3 은 가장 큰 count들 모아둔거 array[i]에서 인덱스 뽑아옴
+    //array2 는 문자열 저장소
+    string *array4=new string [list1.size()];
+    for(int i=0;i<oo;i++){
+        array4[i]=array2[array3[i]];
+        
+    }
+    sort(array4,array4+oo);
+    cout<<array4[0];
+    
+    
+}
