@@ -10,6 +10,8 @@ public:
         children = 0;
         depth=0;
     }
+    void upcount(){count+=1;}
+    void dwcount(){count-=1;}
     void operator=(const Set& source);
     void clear();
     bool insert(const item& entry);
@@ -29,11 +31,12 @@ private:
 
     bool is_leaf()const { return children == 0; }
     bool loose_insert(const item& entry);
-    void loose_remove(const item& target);
+    bool loose_remove(const item& target);
     void remove_largest(item& removed);
     void fix_excess(item x);
     void fix_shortage(int x);
 };
+
 template<class item>
 bool Set<item>::remove(const item&target){
     if(!(loose_remove(target))){
@@ -43,17 +46,97 @@ bool Set<item>::remove(const item&target){
 
     }
 }
+template<class item>
+void Set<item>::remove_largest(item& removed){
+    if(children==0){
+        removed=data[count-1];
+        count-=1;
+    }else if(children!=0){
+        subset[children-1]->remove_largest(removed);
+        if(subset[children-1]->count<MINIMUM){
+            fix_shortage(children-1);
+        }
+    }
+}
+template<class item>
+bool Set<item>::loose_remove(const item&target){
+    int t;
+    for(t=0;(t<count&&data[t]<target);t++);
+    
+    //리프 도달 타겟 못찾음
+    if(is_leaf()&&data[t]!=target){
+        
+        return false;
+    }
+    // 리프에 도달 타겟 찾음
+    if(data[t]==target&&is_leaf()){
+        
+        if(t==1){
+            count-=1;
+        }else if(t==0){
+            data[t]=data[t+1];
+            count-=1;
+        }
+        
+        return true;
+    }
+    // 리프까지 가기, 타겟 못찾음
+    if(data[t]!=target&&!is_leaf()){
+        
+        subset[t]->loose_remove(target);
+        if(subset[t]->count<MINIMUM){
+            fix_shortage(t); //t=1; 이다
+        }
+        return true;
+    }
+    // 안쪽 노드에서 찾았을 경우
+    if(data[t]==target&&children!=0){
+        subset[t]->remove_largest(data[t]);
+        
+        if(subset[t]->count<MINIMUM){
+            fix_shortage(t);//t=0;
+        }
+        return true;
+    }
+    
+}
+
+template<class item>
+void Set<item>::fix_shortage(int x){
+    if(subset[x]){
+        
+    }else if(subset[x+1]->count>=MINIMUM){
+        //위에꺼 빌려온다.
+        subset[x]->upcount();
+        subset[x]->data[subset[x]->count-1]=data[x];
+        dwcount();
+        //오른쪽 아래 꺼 하나 가져옴
+        data[x]=subset[x+1]->data[0];
+        subset[x+1]->dwcount();
+        upcount();
+        // subset[x+1]이 리프노드가 아닐 경우
+        if(!(subset[x+1]->is_leaf())){
+
+        }
+    }else if(subset[x]->count==MINIMUM){
+        
+    }
+}
 
 
 template<class item>
 void Set<item>::print(Set<item> *a,int depth) {
     if (a!=NULL) {
-        print(a->subset[0], depth - 1);
-        cout << setw(4 * depth) << "" << a->data[0] << endl;
-        print(a->subset[1], depth - 1);
-        if (a->count == 2) {
-            cout << setw(4 * depth) << "" << a->data[1] << endl;
-            print(a->subset[2], depth - 1);
+        if(a->count!=0){
+            print(a->subset[0], depth - 1);
+            cout << setw(4 * depth) << "" << a->data[0] << endl;
+            print(a->subset[1], depth - 1);
+            if (a->count == 2) {
+                cout << setw(4 * depth) << "" << a->data[1] << endl;
+                print(a->subset[2], depth - 1);
+            }
+        }else{
+            cout<<"null0"<<endl;
         }
     }
 }
@@ -169,31 +252,19 @@ bool Set<item>::contains(const item& target)const {
 
 int main() {
     Set<int> a;
-    a.insert(5);
-    a.insert(1);
-    a.insert(2);
-    a.insert(7);
-    a.insert(8);
-    a.insert(5);
-    a.insert(4);
-    a.insert(3);
     a.insert(13);
-    a.insert(15);
-    a.insert(18);
-    a.insert(19);
-    a.insert(21);
-    a.insert(23);
-    a.insert(17);
-    a.insert(14);
-    a.insert(9);
-    a.insert(10);
-    a.insert(123);
-    a.insert(125);
-    a.insert(139);
-    a.insert(149);
-    a.insert(129);
-    a.insert(131);
-
+    a.insert(1);
+    a.insert(5);
+    a.insert(65);
+    a.insert(95);
+    a.insert(57);
+    a.insert(7);
+    
+    a.remove(65);
+    //a.remove(1);
+    //a.remove(2);
+    //a.remove(1);
+    
     a.print(&a,a.get_depth());
     
 }
