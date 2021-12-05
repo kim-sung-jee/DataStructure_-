@@ -20,6 +20,21 @@ public:
     bool is_empty()const { return count == 0; }
     void print(Set<item>* a,int depth);
     int get_depth(){return depth;}
+    // void refix(Set<item>*a){
+    //     if(a==NULL){
+    //         return;
+    //     }
+    //     if(a->count==1){
+    //         a->children=2;
+    //         a->refix(a->subset[0]);
+    //         a->refix(a->subset[1]);
+    //     }else if(a->count==2){
+    //         a->children=3;
+    //         a->refix(a->subset[0]);
+    //         a->refix(a->subset[1]);
+    //         a->refix(a->subset[2]);
+    //     }
+    // }
 private:
     int count;
     int depth;
@@ -35,6 +50,7 @@ private:
     void remove_largest(item& removed);
     void fix_excess(item x);
     void fix_shortage(int x);
+    
 };
 
 template<class item>
@@ -42,7 +58,23 @@ bool Set<item>::remove(const item&target){
     if(!(loose_remove(target))){
         return false;
     }
-    if(count==0&&children==2){
+    if(count==0&&children==1){
+        cout<<"hahah"<<endl;
+        Set* child = new Set;
+        for (int y = 0; y < children; y++) {
+            child->subset[y] = subset[y];
+        }
+        upcount();
+        upcount();
+
+        data[0]=child->subset[0]->data[0];
+        data[1]=child->subset[0]->data[1];
+        
+        subset[0]=child->subset[0]->subset[0];
+        subset[1]=child->subset[0]->subset[1];
+        subset[2]=child->subset[0]->subset[2];
+        children+=2;
+        depth-=1;
         
     }
     return true;
@@ -75,8 +107,11 @@ bool Set<item>::loose_remove(const item&target){
         if(t==1){
             count-=1;
         }else if(t==0){
-            data[t]=data[t+1];
-            count-=1;
+            if(count==1){
+                count-=1;
+            }else if(count==2){
+                data[t]=data[t+1];
+            }
         }
         
         return true;
@@ -86,7 +121,7 @@ bool Set<item>::loose_remove(const item&target){
         
         subset[t]->loose_remove(target);
         if(subset[t]->count<MINIMUM){
-            fix_shortage(t); //t=1; 이다
+            fix_shortage(t); //t=2; 이다
         }
         return true;
     }
@@ -104,16 +139,19 @@ bool Set<item>::loose_remove(const item&target){
 
 template<class item>
 void Set<item>::fix_shortage(int x){//t 는 1일 떄
-    if(false){
-        
+    
+    if(count==1){
+        if(x==1&&subset[x-1]->count>MINIMUM){
+            cout<<"jhahaha"<<endl;
     }else if(x==0&&subset[x+1]->count>MINIMUM){
         
-        //위에꺼 빌려온다.
+        //위에꺼 빌려온-다.
         subset[x]->upcount();
         subset[x]->data[subset[x]->count-1]=data[x];
         
         //오른쪽 아래 꺼 하나 위로 올림
         data[x]=subset[x+1]->data[0];
+        subset[x+1]->data[0]=subset[x+1]->data[1];
         subset[x+1]->dwcount();
         
         // subset[x+1]이 리프노드가 아닐 경우
@@ -122,21 +160,70 @@ void Set<item>::fix_shortage(int x){//t 는 1일 떄
         }
         //x=1 임
     }else if(x>0&&subset[x-1]->count==MINIMUM){
+        cout<<"zzz"<<endl;
         subset[x-1]->upcount();
-        subset[x-1]->data[subset[x-1]->count-1]=data[0];
+        subset[x-1]->data[subset[x-1]->count]=data[0];
         dwcount();
         subset[x-1]->subset[2]=subset[x]->subset[0];
         subset[x]=NULL;
+        children-=1;
     }else{
-
+        cout<<"ha"<<endl;
         subset[x]->upcount();
         subset[x]->data[subset[x]->count-1]=data[x];
-        subset[x]->upcount();
-        subset[x]->data[subset[x]->count-1]=subset[x+1]->data[x];
-        subset[x+1]->dwcount();
+        // subset[x]->upcount();
+        // subset[x]->data[subset[x]->count-1]=subset[x+1]->data[x];
+        // subset[x+1]->dwcount();
+        //cout<<subset[x]->count<<endl;
         dwcount();
         
     }
+    }else if(count==2){
+        if(false){
+        
+        }else if(x<=1&&subset[x+1]->count>MINIMUM){
+            
+            //위에꺼 빌려온-다.
+            subset[x]->upcount();
+            subset[x]->data[subset[x]->count-1]=data[x];
+            
+            //오른쪽 아래 꺼 하나 위로 올림
+            data[x]=subset[x+1]->data[0];
+            subset[x+1]->dwcount();
+            subset[x+1]->data[0]=subset[x+1]->data[1];
+            // subset[x+1]이 리프노드가 아닐 경우
+            if(!(subset[x+1]->is_leaf())){
+                
+            }
+            //x=1 임
+        }else if(x>0&&subset[x-1]->count==MINIMUM){
+            
+            subset[x-1]->upcount();
+            subset[x-1]->data[subset[x-1]->count-1]=data[count-1];
+            
+            dwcount();
+            
+            //subset[1]=subset[2];
+            children-=1;
+
+            //subset[x-1]->subset[2]=subset[x]->subset[0];
+            subset[2]=NULL;
+            
+        }else{
+            
+            subset[x]->upcount();
+            subset[x]->data[subset[x]->count-1]=data[x];
+            subset[x]->upcount();
+            subset[x]->data[subset[x]->count-1]=subset[x+1]->data[x];
+            subset[x+1]->dwcount();
+            //cout<<subset[x]->count<<endl;
+            dwcount();
+            
+        }
+    }
+
+
+    
 }
 
 
@@ -241,7 +328,7 @@ void Set<item>::fix_excess(item x) {
         left->children=MINIMUM + 1;
         right->children=MINIMUM + 1;
     }
-    //subset[children]=new Set;
+    subset[children]=new Set;
     for(t=children;x<t;t--){
         subset[t]=subset[t-1];
     }
@@ -268,19 +355,23 @@ bool Set<item>::contains(const item& target)const {
 
 int main() {
     Set<int> a;
-    a.insert(13);
     a.insert(1);
-    a.insert(5);
-    a.insert(65);
-    a.insert(95);
-    a.insert(57);
     a.insert(7);
+    a.insert(95);
+    a.insert(4);
+    a.insert(21);
+    a.insert(41);
+    a.insert(13);
+    a.insert(5);
+    a.insert(57);
+    a.insert(65);
     
-    a.remove(65);
-    //a.remove(1);
-    //a.remove(2);
-    //a.remove(1);
-    
+
+    // remove 
+    a.remove(95);
+    a.remove(41);
+    a.remove(21);
+    a.remove(7);
     a.print(&a,a.get_depth());
     
 }
