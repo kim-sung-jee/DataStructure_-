@@ -42,9 +42,10 @@ bool Set<item>::remove(const item&target){
     if(!(loose_remove(target))){
         return false;
     }
-    if(count==0&&children==1){
-
+    if(count==0&&children==2){
+        
     }
+    return true;
 }
 template<class item>
 void Set<item>::remove_largest(item& removed){
@@ -102,23 +103,38 @@ bool Set<item>::loose_remove(const item&target){
 }
 
 template<class item>
-void Set<item>::fix_shortage(int x){
-    if(subset[x]){
+void Set<item>::fix_shortage(int x){//t 는 1일 떄
+    if(false){
         
-    }else if(subset[x+1]->count>=MINIMUM){
+    }else if(x==0&&subset[x+1]->count>MINIMUM){
+        
         //위에꺼 빌려온다.
         subset[x]->upcount();
         subset[x]->data[subset[x]->count-1]=data[x];
-        dwcount();
-        //오른쪽 아래 꺼 하나 가져옴
+        
+        //오른쪽 아래 꺼 하나 위로 올림
         data[x]=subset[x+1]->data[0];
         subset[x+1]->dwcount();
-        upcount();
+        
         // subset[x+1]이 리프노드가 아닐 경우
         if(!(subset[x+1]->is_leaf())){
-
+            
         }
-    }else if(subset[x]->count==MINIMUM){
+        //x=1 임
+    }else if(x>0&&subset[x-1]->count==MINIMUM){
+        subset[x-1]->upcount();
+        subset[x-1]->data[subset[x-1]->count-1]=data[0];
+        dwcount();
+        subset[x-1]->subset[2]=subset[x]->subset[0];
+        subset[x]=NULL;
+    }else{
+
+        subset[x]->upcount();
+        subset[x]->data[subset[x]->count-1]=data[x];
+        subset[x]->upcount();
+        subset[x]->data[subset[x]->count-1]=subset[x+1]->data[x];
+        subset[x+1]->dwcount();
+        dwcount();
         
     }
 }
