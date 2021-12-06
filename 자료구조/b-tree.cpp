@@ -20,21 +20,7 @@ public:
     bool is_empty()const { return count == 0; }
     void print(Set<item>* a,int depth);
     int get_depth(){return depth;}
-    // void refix(Set<item>*a){
-    //     if(a==NULL){
-    //         return;
-    //     }
-    //     if(a->count==1){
-    //         a->children=2;
-    //         a->refix(a->subset[0]);
-    //         a->refix(a->subset[1]);
-    //     }else if(a->count==2){
-    //         a->children=3;
-    //         a->refix(a->subset[0]);
-    //         a->refix(a->subset[1]);
-    //         a->refix(a->subset[2]);
-    //     }
-    // }
+    
 private:
     int count;
     int depth;
