@@ -209,12 +209,16 @@ void Set<item>::fix_shortage(int x){//t 는 1일 떄
             dwcount();
             
         }
-    }else if(count==2){//x=2;
+    }else if(count==2){//x=1;
         if(x>=1&&subset[x-1]->count>MINIMUM){
-            subset[x]->data[0]=data[1];
+            
+            subset[x]->data[0]=data[0];
             subset[x]->upcount();
-            data[1]=subset[x-1]->data[1];
+            
+
+            data[0]=subset[x-1]->data[1];
             subset[x-1]->dwcount();
+
         }else if(x<=1&&subset[x+1]->count>MINIMUM){
             
             //위에꺼 빌려온-다.
@@ -235,11 +239,12 @@ void Set<item>::fix_shortage(int x){//t 는 1일 떄
         }else if(x>0&&subset[x-1]->count==MINIMUM){
             
             subset[x-1]->upcount();
-            subset[x-1]->data[subset[x-1]->count-1]=data[count-1];
+            subset[x-1]->data[subset[x-1]->count-1]=data[0];
             
             dwcount();
-            
-            //subset[1]=subset[2];
+            data[0]=data[1];
+
+            subset[1]=subset[2];
             children-=1;
 
             //subset[x-1]->subset[2]=subset[x]->subset[0];
@@ -250,12 +255,18 @@ void Set<item>::fix_shortage(int x){//t 는 1일 떄
             subset[x]->upcount();
             subset[x]->data[subset[x]->count-1]=data[x];
             data[x]=data[x+1];
+            dwcount();
 
             subset[x]->upcount();
             subset[x]->data[subset[x]->count-1]=subset[x+1]->data[x];
+
+            subset[x]->subset[1]=subset[1]->subset[0];
+            subset[x]->subset[2]=subset[1]->subset[1];
+
+
             subset[x+1]=subset[x+2];
             //cout<<subset[x]->count<<endl;
-            dwcount();
+            
             children-=1;
         }
     }
@@ -392,20 +403,59 @@ bool Set<item>::contains(const item& target)const {
 }
 
 int main() {
+    cout<<"";
     Set<int> a;
     string a2;
     while(true){
         getline(cin,a2);
         if(a2.at(0)=='i'){
-            cout<<a2.size(); //8 한자리수 9 두자리수 10 세자리수 
-            //11 네자리수
-            char a3=a2.at(7);
-            a.insert(a3-48);
-        }else if(a2.at(0)=='e'){
-            char a3=a2.at(7);
-            
-        }else if(a2.at(0)=='c'){
 
+            if(a2.size()==8){
+                char a3=a2.at(7);
+                a.insert(a3-48);
+            }else if(a2.size()==9){
+                char a3=a2.at(7);
+                char a4=a2.at(8);
+                a.insert(10*(a3-48)+a4-48);
+            }else if(a2.size()==10){
+                char a3=a2.at(7);
+                char a4=a2.at(8);
+                char a5=a2.at(9);
+                a.insert(100*(a3-48)+10*(a4-48)+a5-48);
+            }
+            a.print(&a,a.get_depth());
+
+        }else if(a2.at(0)=='e'){
+
+            if(a2.size()==7){
+                char a3=a2.at(6);
+                a.remove(a3-48);
+            }else if(a2.size()==8){
+                char a3=a2.at(6);
+                char a4=a2.at(7);
+                a.remove(10*(a3-48)+a4-48);
+            }else if(a2.size()==9){
+                char a3=a2.at(6);
+                char a4=a2.at(7);
+                char a5=a2.at(8);
+                a.remove(100*(a3-48)+10*(a4-48)+a5-48);
+            }
+            a.print(&a,a.get_depth());
+
+        }else if(a2.at(0)=='c'){
+            if(a2.size()==7){
+                char a3=a2.at(6);
+                cout<<a.contains(a3-48)<<endl;
+            }else if(a2.size()==8){
+                char a3=a2.at(6);
+                char a4=a2.at(7);
+                cout<<a.contains(10*(a3-48)+a4-48)<<endl;
+            }else if(a2.size()==9){
+                char a3=a2.at(6);
+                char a4=a2.at(7);
+                char a5=a2.at(8);
+                cout<<a.contains(100*(a3-48)+10*(a4-48)+a5-48)<<endl;
+            }
         }else if(a2.at(0)=='q'){
             break;
         }
@@ -413,6 +463,6 @@ int main() {
     }
 
 
-    a.print(&a,a.get_depth());
-    
+   
+    return 0;
 }
