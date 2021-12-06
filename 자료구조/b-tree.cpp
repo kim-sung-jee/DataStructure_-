@@ -55,6 +55,7 @@ private:
 
 template<class item>
 bool Set<item>::remove(const item&target){
+    
     if(!(loose_remove(target))){
         return false;
     }
@@ -70,11 +71,17 @@ bool Set<item>::remove(const item&target){
         data[0]=child->subset[0]->data[0];
         data[1]=child->subset[0]->data[1];
         
+        
+
+
         subset[0]=child->subset[0]->subset[0];
         subset[1]=child->subset[0]->subset[1];
         subset[2]=child->subset[0]->subset[2];
         children+=2;
         depth-=1;
+        if(depth==0){
+            children=0;
+        }
         //cout<<child->subset[0]->subset[0]->data[1]<<endl;
     }
     return true;
@@ -93,6 +100,7 @@ void Set<item>::remove_largest(item& removed){
 }
 template<class item>
 bool Set<item>::loose_remove(const item&target){
+    
     int t;
     for(t=0;(t<count&&data[t]<target);t++);
     
@@ -110,6 +118,7 @@ bool Set<item>::loose_remove(const item&target){
             if(count==1){
                 count-=1;
             }else if(count==2){
+                count-=1;
                 data[t]=data[t+1];
             }
         }
@@ -216,15 +225,17 @@ void Set<item>::fix_shortage(int x){//t 는 1일 떄
             subset[2]=NULL;
             
         }else{
-            
+            //x=0;
             subset[x]->upcount();
             subset[x]->data[subset[x]->count-1]=data[x];
+            data[x]=data[x+1];
+
             subset[x]->upcount();
             subset[x]->data[subset[x]->count-1]=subset[x+1]->data[x];
-            subset[x+1]->dwcount();
+            subset[x+1]=subset[x+2];
             //cout<<subset[x]->count<<endl;
             dwcount();
-            
+            children-=1;
         }
     }
 
@@ -378,6 +389,12 @@ int main() {
     a.remove(41);
     a.remove(21);
     a.remove(7);
+    a.remove(4);
+    a.remove(1);
+    a.remove(57);
+    a.remove(5);
+    a.remove(65);
+    a.remove(13);
     a.print(&a,a.get_depth());
     
 }
