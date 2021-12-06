@@ -70,9 +70,6 @@ bool Set<item>::remove(const item&target){
 
         data[0]=child->subset[0]->data[0];
         data[1]=child->subset[0]->data[1];
-        
-        
-
 
         subset[0]=child->subset[0]->subset[0];
         subset[1]=child->subset[0]->subset[1];
@@ -89,12 +86,23 @@ bool Set<item>::remove(const item&target){
 template<class item>
 void Set<item>::remove_largest(item& removed){
     if(children==0){
+        
         removed=data[count-1];
+        
         count-=1;
     }else if(children!=0){
-        subset[children-1]->remove_largest(removed);
-        if(subset[children-1]->count<MINIMUM){
-            fix_shortage(children-1);
+        if(count==1){
+            subset[1]->remove_largest(removed);
+       
+            if(subset[1]->count<MINIMUM){
+                fix_shortage(1);
+            }
+        }else if(count==2){
+            subset[2]->remove_largest(removed);
+       
+            if(subset[2]->count<MINIMUM){
+                fix_shortage(2);
+            }
         }
     }
 }
@@ -136,6 +144,7 @@ bool Set<item>::loose_remove(const item&target){
     }
     // 안쪽 노드에서 찾았을 경우
     if(data[t]==target&&children!=0){
+        
         subset[t]->remove_largest(data[t]);
         
         if(subset[t]->count<MINIMUM){
@@ -151,51 +160,61 @@ void Set<item>::fix_shortage(int x){//t 는 1일 떄
     
     if(count==1){
         if(x==1&&subset[x-1]->count>MINIMUM){
-            cout<<"jhahaha"<<endl;
-    }else if(x==0&&subset[x+1]->count>MINIMUM){
+
+            subset[1]->data[0]=data[0];
+            subset[1]->upcount();
+            data[0]=subset[0]->data[1];
+            subset[0]->dwcount();
+
+        }else if(x==0&&subset[x+1]->count>MINIMUM){
+            
+            //위에꺼 빌려온-다.
+            subset[x]->upcount();
+            subset[x]->data[subset[x]->count-1]=data[x];
+            
+            //오른쪽 아래 꺼 하나 위로 올림
+            data[x]=subset[x+1]->data[0];
+            subset[x+1]->data[0]=subset[x+1]->data[1];
+            subset[x+1]->dwcount();
+            
+            // subset[x+1]이 리프노드가 아닐 경우
+            if(!(subset[x+1]->is_leaf())){
+                subset[x]->subset[x+1]=subset[x+1]->subset[0];
+                subset[x+1]->subset[0]=subset[x+1]->subset[x+1];
+                subset[x+1]->subset[1]=subset[x+1]->subset[x+2];
+            }
+            //x=1 임
+        }else if(x>0&&subset[x-1]->count==MINIMUM){
+            
+            subset[x-1]->upcount();
+            subset[x-1]->data[subset[x-1]->count-1]=data[0];
+            //cout<<data[0]<<endl;
+            dwcount();
+            subset[x-1]->subset[2]=subset[x]->subset[0];
+            subset[x]=NULL;
+            children-=1;
+        }else{
+            
+            subset[x]->upcount();
+            subset[x]->data[subset[x]->count-1]=data[x];
         
-        //위에꺼 빌려온-다.
-        subset[x]->upcount();
-        subset[x]->data[subset[x]->count-1]=data[x];
-        
-        //오른쪽 아래 꺼 하나 위로 올림
-        data[x]=subset[x+1]->data[0];
-        subset[x+1]->data[0]=subset[x+1]->data[1];
-        subset[x+1]->dwcount();
-        
-        // subset[x+1]이 리프노드가 아닐 경우
-        if(!(subset[x+1]->is_leaf())){
+            subset[x]->upcount();
+            subset[x]->data[subset[x]->count-1]=subset[x+1]->data[x];
+            subset[x+1]->dwcount();
+            subset[x]->subset[x+1]=subset[x+1]->subset[x];
+            subset[x]->subset[x+2]=subset[x+1]->subset[x+1];
+            children-=1;
+            
+            
+            dwcount();
             
         }
-        //x=1 임
-    }else if(x>0&&subset[x-1]->count==MINIMUM){
-        
-        subset[x-1]->upcount();
-        subset[x-1]->data[subset[x-1]->count-1]=data[0];
-        //cout<<data[0]<<endl;
-        dwcount();
-        subset[x-1]->subset[2]=subset[x]->subset[0];
-        subset[x]=NULL;
-        children-=1;
-    }else{
-        
-        subset[x]->upcount();
-        subset[x]->data[subset[x]->count-1]=data[x];
-    
-        subset[x]->upcount();
-        subset[x]->data[subset[x]->count-1]=subset[x+1]->data[x];
-        subset[x+1]->dwcount();
-        subset[x]->subset[x+1]=subset[x+1]->subset[x];
-        subset[x]->subset[x+2]=subset[x+1]->subset[x+1];
-        children-=1;
-        
-        
-        dwcount();
-        
-    }
-    }else if(count==2){
-        if(false){
-        
+    }else if(count==2){//x=2;
+        if(x>=1&&subset[x-1]->count>MINIMUM){
+            subset[x]->data[0]=data[1];
+            subset[x]->upcount();
+            data[1]=subset[x-1]->data[1];
+            subset[x-1]->dwcount();
         }else if(x<=1&&subset[x+1]->count>MINIMUM){
             
             //위에꺼 빌려온-다.
@@ -208,7 +227,9 @@ void Set<item>::fix_shortage(int x){//t 는 1일 떄
             subset[x+1]->data[0]=subset[x+1]->data[1];
             // subset[x+1]이 리프노드가 아닐 경우
             if(!(subset[x+1]->is_leaf())){
-                
+                subset[x]->subset[x+1]=subset[x+1]->subset[0];
+                subset[x+1]->subset[0]=subset[x+1]->subset[x+1];
+                subset[x+1]->subset[1]=subset[x+1]->subset[x+2];
             }
             //x=1 임
         }else if(x>0&&subset[x-1]->count==MINIMUM){
@@ -372,29 +393,49 @@ bool Set<item>::contains(const item& target)const {
 
 int main() {
     Set<int> a;
-    a.insert(1);
-    a.insert(7);
-    a.insert(95);
-    a.insert(4);
-    a.insert(21);
-    a.insert(41);
-    a.insert(13);
-    a.insert(5);
-    a.insert(57);
-    a.insert(65);
+    // a.insert(1);
+    // a.insert(7);
+    // a.insert(95);
+    // a.insert(4);
+    // a.insert(21);
+    // a.insert(41);
+    // a.insert(13);
+    // a.insert(5);
+    // a.insert(57);
+    // a.insert(65);
     
 
-    // remove 
-    a.remove(95);
-    a.remove(41);
-    a.remove(21);
-    a.remove(7);
-    a.remove(4);
-    a.remove(1);
-    a.remove(57);
-    a.remove(5);
-    a.remove(65);
-    a.remove(13);
+    // // remove 
+    // a.remove(95);
+    // a.remove(41);
+    // a.remove(21);
+    // a.remove(7);
+    // a.remove(4);
+    // a.remove(1);
+    // a.remove(57);
+    // a.remove(5);
+    // a.remove(65);
+    // a.remove(13);
+    a.insert(17);
+    a.insert(6);
+    a.insert(4);
+    a.insert(12);
+    a.insert(19);
+    a.insert(23);
+    a.insert(18);
+    a.insert(22);
+    a.insert(25);
+    a.insert(27);
+    
+    a.remove(17);
+    a.remove(22);
+    a.remove(19);
+    
+    
+    a.insert(28);
+    a.insert(26);
+    a.insert(29);
+    a.remove(25);
     a.print(&a,a.get_depth());
     
 }
