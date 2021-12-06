@@ -12,8 +12,8 @@ public:
     }
     void upcount(){count+=1;}
     void dwcount(){count-=1;}
-    void operator=(const Set& source);
-    void clear();
+    
+    
     bool insert(const item& entry);
     bool remove(const item& target);
     bool contains(const item& target)const;
@@ -146,7 +146,7 @@ void Set<item>::fix_shortage(int x){//t 는 1일 떄
     
     if(count==1){
         if(x==1&&subset[x-1]->count>MINIMUM){
-
+            
             subset[1]->data[0]=data[0];
             subset[1]->upcount();
             data[0]=subset[0]->data[1];
@@ -209,10 +209,10 @@ void Set<item>::fix_shortage(int x){//t 는 1일 떄
             
             //위에꺼 빌려온-다.
             subset[x]->upcount();
-            subset[x]->data[subset[x]->count-1]=data[x];
+            subset[x]->data[0]=data[0];
             
             //오른쪽 아래 꺼 하나 위로 올림
-            data[x]=subset[x+1]->data[0];
+            data[x]=subset[1]->data[0];
             subset[x+1]->dwcount();
             subset[x+1]->data[0]=subset[x+1]->data[1];
             // subset[x+1]이 리프노드가 아닐 경우
@@ -221,22 +221,33 @@ void Set<item>::fix_shortage(int x){//t 는 1일 떄
                 subset[x+1]->subset[0]=subset[x+1]->subset[x+1];
                 subset[x+1]->subset[1]=subset[x+1]->subset[x+2];
             }
-            //x=1 임
+            //x=2 임
         }else if(x>0&&subset[x-1]->count==MINIMUM){
             
             subset[x-1]->upcount();
-            subset[x-1]->data[subset[x-1]->count-1]=data[0];
+            subset[x-1]->data[subset[x-1]->count-1]=data[x-1];
             
             dwcount();
-            data[0]=data[1];
+            
+            
 
-            subset[1]=subset[2];
+            if(x==1){
+                data[0]=data[1];
+                subset[x]=subset[x+1];
+            }else{
+
+            }
+            
             children-=1;
-
-            //subset[x-1]->subset[2]=subset[x]->subset[0];
+            if(!is_leaf()){
+                subset[x-1]->subset[x]=subset[x]->subset[0];
+                subset[x-1]->children+=1;
+            }
+            
             subset[2]=NULL;
             
         }else{
+            
             //x=0;
             subset[x]->upcount();
             subset[x]->data[subset[x]->count-1]=data[x];
@@ -251,6 +262,7 @@ void Set<item>::fix_shortage(int x){//t 는 1일 떄
 
 
             subset[x+1]=subset[x+2];
+            
             //cout<<subset[x]->count<<endl;
             
             children-=1;
@@ -389,7 +401,7 @@ bool Set<item>::contains(const item& target)const {
 }
 
 int main() {
-    cout<<"";
+    
     Set<int> a;
     string a2;
     while(true){
