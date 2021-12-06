@@ -59,7 +59,7 @@ bool Set<item>::remove(const item&target){
         return false;
     }
     if(count==0&&children==1){
-        cout<<"hahah"<<endl;
+        
         Set* child = new Set;
         for (int y = 0; y < children; y++) {
             child->subset[y] = subset[y];
@@ -75,7 +75,7 @@ bool Set<item>::remove(const item&target){
         subset[2]=child->subset[0]->subset[2];
         children+=2;
         depth-=1;
-        
+        //cout<<child->subset[0]->subset[0]->data[1]<<endl;
     }
     return true;
 }
@@ -160,21 +160,27 @@ void Set<item>::fix_shortage(int x){//t 는 1일 떄
         }
         //x=1 임
     }else if(x>0&&subset[x-1]->count==MINIMUM){
-        cout<<"zzz"<<endl;
+        
         subset[x-1]->upcount();
-        subset[x-1]->data[subset[x-1]->count]=data[0];
+        subset[x-1]->data[subset[x-1]->count-1]=data[0];
+        //cout<<data[0]<<endl;
         dwcount();
         subset[x-1]->subset[2]=subset[x]->subset[0];
         subset[x]=NULL;
         children-=1;
     }else{
-        cout<<"ha"<<endl;
+        
         subset[x]->upcount();
         subset[x]->data[subset[x]->count-1]=data[x];
-        // subset[x]->upcount();
-        // subset[x]->data[subset[x]->count-1]=subset[x+1]->data[x];
-        // subset[x+1]->dwcount();
-        //cout<<subset[x]->count<<endl;
+    
+        subset[x]->upcount();
+        subset[x]->data[subset[x]->count-1]=subset[x+1]->data[x];
+        subset[x+1]->dwcount();
+        subset[x]->subset[x+1]=subset[x+1]->subset[x];
+        subset[x]->subset[x+2]=subset[x+1]->subset[x+1];
+        children-=1;
+        
+        
         dwcount();
         
     }
