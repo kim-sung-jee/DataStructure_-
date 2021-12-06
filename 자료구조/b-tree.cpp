@@ -393,49 +393,26 @@ bool Set<item>::contains(const item& target)const {
 
 int main() {
     Set<int> a;
-    // a.insert(1);
-    // a.insert(7);
-    // a.insert(95);
-    // a.insert(4);
-    // a.insert(21);
-    // a.insert(41);
-    // a.insert(13);
-    // a.insert(5);
-    // a.insert(57);
-    // a.insert(65);
-    
+    string a2;
+    while(true){
+        getline(cin,a2);
+        if(a2.at(0)=='i'){
+            cout<<a2.size(); //8 한자리수 9 두자리수 10 세자리수 
+            //11 네자리수
+            char a3=a2.at(7);
+            a.insert(a3-48);
+        }else if(a2.at(0)=='e'){
+            char a3=a2.at(7);
+            
+        }else if(a2.at(0)=='c'){
 
-    // // remove 
-    // a.remove(95);
-    // a.remove(41);
-    // a.remove(21);
-    // a.remove(7);
-    // a.remove(4);
-    // a.remove(1);
-    // a.remove(57);
-    // a.remove(5);
-    // a.remove(65);
-    // a.remove(13);
-    a.insert(17);
-    a.insert(6);
-    a.insert(4);
-    a.insert(12);
-    a.insert(19);
-    a.insert(23);
-    a.insert(18);
-    a.insert(22);
-    a.insert(25);
-    a.insert(27);
-    
-    a.remove(17);
-    a.remove(22);
-    a.remove(19);
-    
-    
-    a.insert(28);
-    a.insert(26);
-    a.insert(29);
-    a.remove(25);
+        }else if(a2.at(0)=='q'){
+            break;
+        }
+
+    }
+
+
     a.print(&a,a.get_depth());
     
 }
