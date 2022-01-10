@@ -36,17 +36,19 @@ int main(){
         int w=v[i].first;
         int start=v[i].second.first;
         int end=v[i].second.second;
-
+           
+        // 노드들 부모 찾는 과정
         int x=find(start);
         int y=find(end);
-
+        //부모가 같다면 
         if(x==y){continue;}
-
+        // union 병합 과정
         if(x<y){
             p[y]=x;
         }else{
             p[x]=y;
         }
+        // 크루스칼 
         sum+=w;
         num++;
         if(num==V-1){
