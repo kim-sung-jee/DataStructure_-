@@ -296,3 +296,120 @@ int main(){
     cout<<ans;
 }
 ```
+
+
+
+최적화 문제
+---
+문제의 답이 하나가 아니라 여러개이고 그 중 어떤 기준에 따라 가장 좋은 답을 찾아내는 문제
+
+
+예제: 여행하는 외판원 문제
+
+```cpp
+#include<iostream>
+#include<vector>
+#include<algorithm>
+using namespace std;
+
+int n;
+double dist[10][10];
+vector<bool> visited;
+vector<int> path;
+double shortestPath(vector<int>&path,vector<bool>&visited,double currentLength){
+    if((path.size()==n)){
+        return currentLength+dist[path[0]][path.back()];
+    }
+    double ret=1e9;
+    
+    for(int next=0;next<n;next++){
+        if(visited[next]){continue;}
+        int here=path.back();
+        path.push_back(next);
+        visited[next]=true;
+        double cand=shortestPath(path,visited,currentLength+dist[here][next]);
+        //재귀호출이 끝난 후 처리
+        ret=min(ret,cand);
+        visited[next]=false;
+        path.pop_back();
+    }
+    return ret;         
+                    
+}
+int main(){
+    cin>>n;
+    for(int i=0;i<n;i++){
+        visited.push_back(false);
+    }
+    
+    for(int i=0;i<n;i++){
+        for(int j=0;j<n;j++){
+            dist[j][i]=1;
+            dist[i][j]=1;
+        }
+    }
+    path.push_back(0);
+    
+    double a=shortestPath(path,visited,0);
+    cout<<a;
+}
+```
+
+
+문제:시계맞추기
+
+```cpp
+#include<iostream>
+#include<vector>
+#include<algorithm>
+using namespace std;
+
+const int INF=9999,SWITCHES=10,CLOCKS=16;
+
+const char linked[SWITCHES][CLOCKS+1]={
+    "xxx.............",
+    "...x...x.x.x....",
+    "x...xxxx........",
+    "......xxx.x.x...",
+    "x.x...........xx",
+    "...x..........xx",
+    "....xx.x......xx",
+    ".xxxxx..........",
+    "...xxx...x...x.."
+};
+
+bool areAligned(const vector<int>&clocks){
+    for(int i=0;i<CLOCKS;i++){
+        if(clocks[i]!=12){return false;}
+    }
+    return true;
+}
+void push(vector<int>&clocks, int swtch){
+    for(int clock=0;clock<CLOCKS;clock++){
+        if(linked[swtch][clock]=='x'){
+            clocks[clock]+=3;
+            if(clocks[clock]==15){clocks[clock]=3;}
+        }
+    }
+}
+int solve(vector<int>& clocks,int swtch){
+    if(swtch==SWITCHES){return areAligned(clocks)?0:INF;}
+    int ret=INF;
+    for(int cnt=0;cnt<4;cnt++){
+        ret=min(ret,cnt+solve(clocks,swtch+1));
+        push(clocks,swtch);
+    }
+    return ret;
+}
+vector<int> clocks;
+int main(){
+    int a;
+    for(int i=0;i<CLOCKS;i++){
+        cin>>a;
+        clocks.push_back(a);
+    }
+    a=solve(clocks,0);
+    cout<<a;
+}
+```
+
