@@ -413,5 +413,6 @@ int main(){
 }
 ```
 
-next_permutation() 
+next_permutation() 사용법
 ----
+https://twpower.github.io/82-next_permutation-and-prev_permutation
