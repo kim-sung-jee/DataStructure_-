@@ -413,3 +413,5 @@ int main(){
 }
 ```
 
+next_permutation() 
+----
