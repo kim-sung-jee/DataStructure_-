@@ -40,4 +40,4 @@ int main(){
     for(int i=0;i<N;i++){
         cout<<N-ans[i+1]-1<<endl;
     }
-}
+} 
