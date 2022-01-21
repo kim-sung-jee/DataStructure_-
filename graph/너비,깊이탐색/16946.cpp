@@ -124,3 +124,99 @@ int main(){
         cout<<endl;
     }
 }
+
+
+
+#include<iostream>
+#include<vector>
+#include<queue>
+#include<string>
+#include<set>
+using namespace std;
+
+int map[1000][1000];
+bool visited[1000][1000];
+int area[1000][1000];
+int ans[1000][1000];
+int idx=0;
+int dx[4]={1,-1,0,0};
+int dy[4]={0,0,1,-1};
+int N,M;
+vector<int> zerosize;
+void bfs(int X,int Y){
+    queue<pair<int,int>> q;
+    q.push({X,Y});
+    visited[Y][X]=true;
+    area[Y][X]=idx;
+    int cnt=1;
+    while(!q.empty()){
+        int x=q.front().first;
+        int y=q.front().second;
+        q.pop();
+
+        for(int i=0;i<4;i++){
+            int nx=x+dx[i];
+            int ny=y+dy[i];
+            if(nx>=0&&ny>=0&&nx<M&&ny<N){
+                if(map[ny][nx]==0&&visited[ny][nx]==false){
+                    visited[ny][nx]=true;
+                    area[ny][nx]=idx;
+                    q.push({nx,ny});
+                    cnt+=1;
+                }
+            }
+        }
+    }
+    zerosize.push_back(cnt);
+}
+
+int main(){
+    
+    cin>>N>>M;
+    string a;
+    for(int i=0;i<N;i++){
+        cin>>a;
+        for(int t=0;t<M;t++){
+            char c=a.at(t);
+            map[i][t]=c-'0';
+        }
+        fill_n(visited[i],1000,false);
+    }
+    for(int i=0;i<N;i++){
+        for(int t=0;t<M;t++){
+            if(map[i][t]==0&&visited[i][t]==false){
+                bfs(t,i);
+                idx++;
+            }
+        }
+    }
+    for(int i=0;i<N;i++){
+        for(int t=0;t<M;t++){
+            if(map[i][t]==1){
+                set<int> s;// area idx 를 저장하는 set
+                // set 중복없음 
+                for(int z=0;z<4;z++){
+                    int nx=t+dx[z];
+                    int ny=i+dy[z];
+                    if(nx>=0&&ny>=0&&nx<M&&ny<N){
+                        if(map[ny][nx]==0){
+                            // find는 없을때 s.end() 반환
+                            if(s.find(area[ny][nx])==s.end()){
+                                s.insert(area[ny][nx]);
+                                ans[i][t]+=zerosize[area[ny][nx]];
+                            }
+                        }
+                    }
+                }
+                ans[i][t]=ans[i][t]+1;
+                ans[i][t]=ans[i][t]%10;
+            }
+        }
+    }
+    for(int i=0;i<N;i++){
+        for(int t=0;t<M;t++){
+            cout<<ans[i][t];
+        }
+        cout<<endl;
+    }
+}
