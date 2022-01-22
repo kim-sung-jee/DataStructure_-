@@ -105,3 +105,100 @@ int main(){
 }
 
 //// 이상 기존 코드
+
+
+
+#include<iostream>
+#include<vector>
+#include<queue>
+#include<string.h>
+
+using namespace std;
+int N,M;
+int temp[501];
+int indegree[501];
+int adj[501][501];
+vector<int> ans;
+void topoloySort(){
+    queue<int> q;
+    for(int i=1;i<=N;i++){
+        if(indegree[i]==0){
+           
+            q.push(i);
+        }
+    }
+    for(int i=1;i<=N;i++){
+        if(q.empty()){cout<<"IMPOSSIBLE"<<endl;
+        return;}
+        if(q.size()>1){cout<<"?"<<endl;return;}
+        int now=q.front();
+        ans.push_back(now);
+        indegree[now]--;
+        q.pop();
+        for(int t=1;t<=N;t++){
+            if(adj[now][t]!=0){
+                indegree[t]--;
+                // if(--indegree[t]==0){
+                    
+                //     q.push(t);
+                // }
+            }
+            if(indegree[t]==0){
+                q.push(t);
+            }
+        }
+    }
+    for(int i=0;i<ans.size();i++){
+        cout<<ans[i]<<" ";
+    }
+    cout<<endl;
+    
+}
+int main(){
+    int T;
+    cin>>T;
+    for(int aa=0;aa<T;aa++){
+        memset(indegree,0,sizeof(indegree));
+        memset(adj,false,sizeof(adj));
+        cin>>N;
+        for(int i=1;i<=N;i++){
+            cin>>temp[i];
+            indegree[i]=0;
+            for(int j=1;j<=N;j++){
+                adj[i][j]=false;
+            }
+        }
+        for(int i=1;i<=N;i++){
+            int start=temp[i];
+            for(int j=i+1;j<=N;j++){
+                adj[start][temp[j]]=true;
+                indegree[temp[j]]++;
+            }
+        }
+
+        cin>>M;
+        for(int i=0;i<M;i++){
+            int a,b;
+            cin>>a>>b;
+            if(adj[a][b]){
+                adj[a][b]=false;
+                adj[b][a]=true;
+                indegree[a]++;
+                indegree[b]--;
+            }else{
+                adj[b][a]=false;
+                adj[a][b]=true;
+                indegree[a]--;
+                indegree[b]++;
+            }
+        }
+
+       
+
+
+        topoloySort();
+        ans.clear();
+
+    }
+}
+초기화좀 잘하자
