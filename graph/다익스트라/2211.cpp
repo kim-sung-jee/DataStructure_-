@@ -51,6 +51,6 @@ int main(){
         cout<<i<<" "<<parent[i]<<endl;
     }
     
-
+ 
 
 }
