@@ -47,7 +47,7 @@ bool bfs(int S){
                 if(0<=nx&&nx<N&&0<=ny&&ny<N){
                     q.push({nx,ny});
                 }
-            }
+            } 
 
 
         }
