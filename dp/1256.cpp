@@ -43,4 +43,4 @@ int main(){
     skip=K-1;
     generate3(N,M,"");
     cout<<"-1";
-}
+} 
