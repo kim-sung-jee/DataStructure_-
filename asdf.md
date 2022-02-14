@@ -23,13 +23,16 @@
 > 결정문제 난이도 <= 최적화문제 난이도
 
 
+
+
+
+# 예제: DARPA Grand Challenge
+
 > 문제 좌표에 카메라를 설치할 건데 n개의 카메라를 m개의 위치에 설치 하려고 한다.
 > 이 중 n군데의 카메라를 설치하여 **가장 가까운 두 카메라 사이의 간격을 최대화** 하려고 함.
 
 ![KakaoTalk_20220214_161217039](https://user-images.githubusercontent.com/85841791/153819930-9b603632-02a7-41b4-acf6-f9eebf1e2d00.jpg)
 
-
-# 예제: DARPA Grand Challenge
 
 optimize(locations,cameras)= 카메라를 설치할 수 있는 위치 locations과 카메라의 수 cameras가 주어질 때, 카메라 간 최소 간격의 최대치를 반환.
 
