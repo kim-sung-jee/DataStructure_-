@@ -7,8 +7,8 @@
 
 다음은 여행하는 외판원 문제(TSP)를 최적화 문제와 결정 문제로 표현한 예시이다.
 
-* optimize(G)=그래프 G의 모든 정점을 한 번씩 방문하고 시작점으로 돌아오는 최단 경로의 길이를 반환한다.(최적화 문제)
-* decision(G,x)= 그래프 G의 모든 정점을 한 번씩 방문하고 시작점으로 돌아오면서 길이가 x 이하인 경로의 존재 여부를 반환한다.(결정 문제)
+* optimize(G)=그래프 G의 모든 정점을 한 번씩 방문하고 시작점으로 돌아오는 *최단 경로의 길이*를 반환한다.(최적화 문제)
+* decision(G,x)= 그래프 G의 모든 정점을 한 번씩 방문하고 시작점으로 돌아오면서 길이가 *x 이하인 경로의 존재 여부*를 반환한다.(결정 문제)
 
 > optimize()는 가장 짧은 경로의 길이를 실수로 반환, decision()은 x보다 짧은 경로가 있는지 여부를 반환
 
@@ -36,7 +36,7 @@ optimize(locations,cameras)= 카메라를 설치할 수 있는 위치 locations�
 
 결정문제로 바꾸면
 
-decision(locations, cameras, gap)=카메라를 설치할 수 있는 위치 locations와 카메라의 수 cameras가 주어질 때, 이들을 적절히 배치해 모든 카메라의 간격이 gap 이상이 되도록 하는 방법
+decision(locations, cameras, gap)=카메라를 설치할 수 있는 위치 locations와 카메라의 수 cameras가 주어질 때, 이들을 적절히 배치해 모든 카메라의 간격이 **gap 이상**이 되도록 하는 방법
 이 있는지 판단
 ```cpp
 bool decision(const vector<double>& location, int cameras, double gap) {
@@ -164,3 +164,10 @@ int optimize1() {
 ```
 * optimize에서 if(decision(mid))가 참이라면 상한을 줄여주고
 * false 라면 하한을 늘려준다
+
+
+# 문제 12.6 : 수강 철회
+
+
+> decision(x) = 적절히 과목들을 철회해 누적 등수 x 이하가 될 수 있을까?
+> 
