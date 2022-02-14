@@ -225,3 +225,33 @@ v를 오름차순으로 정렬한 후 뒤에서 k개의 원소를 더해준다.
 그 값이 0 보다 크거나 같다면 true 반환 --> 누적등수를 더 작게 해준다.
 그 값이 0 보다 작다면 false 반환 --> 누적등수를 더 크게 .
 
+```cpp
+bool decision(double x)
+{
+	vector<double> v;
+	for (int i = 0; i < N; i++)
+		v.push_back(x * C[i] - R[i]);
+	// 오름차순 정렬 후에
+	sort(v.begin(), v.end());
+	double sum = 0;
+	// 뒤에서 K개 만큼의 숫자를 더해준다.
+	for (int i = N - K; i < N; i++)
+		sum += v[i];
+	
+	return sum >= 0;
+}
+
+double optimize()
+{
+	double lo = -1e-9, hi = 1;
+	for (int i = 0; i < 100; i++) {
+		double mid = (lo + hi) / 2;
+		
+		if (decision(mid)) 
+			hi = mid;
+		else
+			lo = mid;
+	}
+	return hi;
+}
+```
