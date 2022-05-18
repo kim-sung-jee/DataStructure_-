@@ -6,10 +6,12 @@ using namespace std;
 string house[5]={"blue","green","red","white","yellow"};
 string nationality[5]={"Brit","Dane","German","Norwegian","Swede"};
 string beverage[5]={"beer","coffee","milk","tea","water"};
-string cigar[5]={"Blue Master","Dunhill","Pall Mall","Prince","Blend"};
+string cigar[5]={"Blue_Master","Dunhill","Pall_Mall","Prince","Blend"};
 string pet[5]={"cat","bird","dog","fish","horse"};
+// enum {blue,green,red,white,yellow}
+// enum {Brit,Dane,German,Norwegian,Swede}
 map<string,int> m_house;
-map<string,int> m_nationaltiy;
+map<string,int> m_nationality;
 map<string,int> m_beverage;
 map<string,int> m_cigar;
 map<string,int> m_pet;
@@ -18,12 +20,7 @@ map<string,int> m_pet;
 const int Peoples=5;
 const int Properties=5;
 const int arrSize=5;
-
-const int Color=0;
-const int Beverage=1;
-const int Pet=2;
-const int Cigarets=3;
-const int Nationality=4;
+enum {Color,Beverage,Pet,Cigarets,Nationality};
 
 // y번 사람의 x번 째 속성
 int ans[Peoples][Properties];
@@ -35,7 +32,7 @@ void init(){
     
     for(int i=0;i<arrSize;i++){
         m_house.insert({house[i],i});
-        m_nationaltiy.insert({nationality[i],i});
+        m_nationality.insert({nationality[i],i});
         m_beverage.insert({beverage[i],i});
         m_cigar.insert({cigar[i],i});
         m_pet.insert({pet[i],i});
@@ -56,7 +53,7 @@ bool promising(){
             // k 사람번호
             for(int k=i+1;k<Peoples;k++){
                 if(ans[i][t]!=-1&&ans[k][t]!=-1&&ans[i][t]==ans[k][t]){
-                    //cout<<ans[i][t]<<" "<<ans[k][t]<<"i t k is "<<i<<t<<k<<endl;
+                    
                     return false;
                 }
             }
@@ -67,7 +64,7 @@ bool promising(){
     //brit 는 red house에 산다.
     // 확인 완료...
     for(int i=0;i<Properties;i++){
-        if(ans[i][Nationality]==m_nationaltiy["Brit"]&&ans[i][Color]!=m_house["red"]&&ans[i][Color]!=-1){
+        if(ans[i][Nationality]==m_nationality["Brit"]&&ans[i][Color]!=m_house["red"]&&ans[i][Color]!=-1){
             return false;
         }
     }
@@ -77,14 +74,14 @@ bool promising(){
     for(int i=0;i<Properties;i++){
         // i번째 사람이 스웨덴이고 + i번째 사람의 펫이 dog 가 아니고 + i 번째 사람의 pet이 할당이 된 상태라면
         // 즉 초기화만 일어난 상태가 아니라면
-        if(ans[i][Nationality]==m_nationaltiy["Swede"]&&ans[i][Pet]!=m_pet["dog"]&&ans[i][Pet]!=-1){
+        if(ans[i][Nationality]==m_nationality["Swede"]&&ans[i][Pet]!=m_pet["dog"]&&ans[i][Pet]!=-1){
             return false;
         }
     }
     // 3번 조건  Dane 는 tea를 마신다.
     // 확인완료
     for(int i=0;i<Properties;i++){
-        if(ans[i][Nationality]==m_nationaltiy["Dane"]&&ans[i][Beverage]!=m_beverage["tea"]&&ans[i][Beverage]!=-1){
+        if(ans[i][Nationality]==m_nationality["Dane"]&&ans[i][Beverage]!=m_beverage["tea"]&&ans[i][Beverage]!=-1){
             return false;
         }
     }
@@ -103,7 +100,7 @@ bool promising(){
             }
         }
 
-        return false;
+        
     }
     // 5번 조건 초록색집의 주인은 커피를 마신다.
     // 확인 완료
@@ -115,7 +112,7 @@ bool promising(){
     // 6번 조건 pall mall 피는 애는 새를 기른다.
     // 확인 완료
     for(int i=0;i<Properties;i++){
-        if(ans[i][Cigarets]==m_cigar["Pall Mall"]&&ans[i][Pet]!=m_pet["bird"]&&ans[i][Pet]!=-1){
+        if(ans[i][Cigarets]==m_cigar["Pall_Mall"]&&ans[i][Pet]!=m_pet["bird"]&&ans[i][Pet]!=-1){
             return false;
         }
     }
@@ -126,15 +123,15 @@ bool promising(){
             return false;
         }
     }
-    // 8번 조건 중앙집 바로 오른쪽에서 사는 애는 우유를 마신다.
+    // 8번 조건 중앙집  사는 애는 우유를 마신다.
     // 확인 완료
-    if(ans[3][Beverage]!=m_beverage["milk"]&&ans[3][Beverage]!=-1){
+    if(ans[2][Beverage]!=m_beverage["milk"]&&ans[2][Beverage]!=-1){
         return false;
     }
     
     // 9번 조건 노르웨이 사람은 맨 왼쪽에 산다.
     // 확인 완료
-    if(ans[0][Nationality]!=m_nationaltiy["Norwegian"]&&ans[0][Nationality]!=-1){
+    if(ans[0][Nationality]!=m_nationality["Norwegian"]&&ans[0][Nationality]!=-1){
         return false;
     }
     // 10번 조건 
@@ -154,7 +151,7 @@ bool promising(){
             // 2개다 true면 false 반환
             // 두개중 하나라도 true 면 false 임...
             // i번째 사람이 blend 피고 + 왼쪽사람이 cat을 안기른다.
-            if((ans[i][Cigarets]==m_cigar["Blend"]&&ans[i-1][Pet]!=m_pet["cat"]&&ans[i-1][Pet]!=-1)||
+            if((ans[i][Cigarets]==m_cigar["Blend"]&&ans[i-1][Pet]!=m_pet["cat"]&&ans[i-1][Pet]!=-1)&&
             // i 번째 사람이 blend 피고 + 오른쪽 사람이 cat을 안기른다.
             (ans[i][Cigarets]==m_cigar["Blend"]&&ans[i+1][Pet]!=m_pet["cat"]&&ans[i+1][Pet]!=-1)){
                 return false;
@@ -175,19 +172,20 @@ bool promising(){
                 return false;
             }
         }else{
-            if((ans[i][Pet]==m_pet["horse"]&&ans[i-1][Pet]!=m_cigar["Dunhill"]&&ans[i-1][Cigarets]!=-1)||
+            if((ans[i][Pet]==m_pet["horse"]&&ans[i-1][Pet]!=m_cigar["Dunhill"]&&ans[i-1][Cigarets]!=-1)&&
             
             (ans[i][Cigarets]==m_pet["horse"]&&ans[i+1][Pet]!=m_cigar["Dunhill"]&&ans[i+1][Cigarets]!=-1)){
                 return false;
             }
         }
-
     }
+
+    
     // 12번 조건
     // blue master 피는 사람은 beer 마심
     //확인 완료
     for(int i=0;i<Properties;i++){
-        if(ans[i][Cigarets]==m_cigar["Blue Master"]&&ans[i][Beverage]!=m_beverage["beer"]&&ans[i][Beverage]!=-1){
+        if(ans[i][Cigarets]==m_cigar["Blue_Master"]&&ans[i][Beverage]!=m_beverage["beer"]&&ans[i][Beverage]!=-1){
             return false;
         }
     }
@@ -195,27 +193,26 @@ bool promising(){
     // german 사람은 prince 를 핀다.
     // 확인 완료
     for(int i=0;i<Properties;i++){
-        if(ans[i][Nationality]==m_nationaltiy["German"]&&ans[i][Cigarets]!=m_cigar["Prince"]&&ans[i][Cigarets]!=-1){
+        if(ans[i][Nationality]==m_nationality["German"]&&ans[i][Cigarets]!=m_cigar["Prince"]&&ans[i][Cigarets]!=-1){
             return false;
         }
     }
     // 14번 조건
     // norwegian 은 blue옆에 산다.
     for(int i=0;i<Properties;i++){
-        
-
+    
         if(i==0){
-            if(ans[i][Nationality]==m_nationaltiy["Norwegian"]&&ans[i+1][Color]!=m_house["blue"]&&ans[i+1][Color]!=-1){
+            if(ans[i][Nationality]==m_nationality["Norwegian"]&&ans[i+1][Color]!=m_house["blue"]&&ans[i+1][Color]!=-1){
                 return false;
             }
         }else if(i==4){
-            if(ans[i][Nationality]==m_nationaltiy["Norwegian"]&&ans[i-1][Color]!=m_house["blue"]&&ans[i-1][Color]!=-1){
+            if(ans[i][Nationality]==m_nationality["Norwegian"]&&ans[i-1][Color]!=m_house["blue"]&&ans[i-1][Color]!=-1){
                 return false;
             }
         }else{
-            if((ans[i][Nationality]==m_nationaltiy["Norwegian"]&&ans[i-1][Color]!=m_house["blue"]&&ans[i-1][Color]!=-1)||
+            if((ans[i][Nationality]==m_nationality["Norwegian"]&&ans[i-1][Color]!=m_house["blue"]&&ans[i-1][Color]!=-1)&&
             
-            (ans[i][Nationality]==m_nationaltiy["Norwegian"]&&ans[i+1][Color]!=m_house["blue"]&&ans[i+1][Color]!=-1)){
+            (ans[i][Nationality]==m_nationality["Norwegian"]&&ans[i+1][Color]!=m_house["blue"]&&ans[i+1][Color]!=-1)){
                 return false;
             }
         }
@@ -234,7 +231,7 @@ bool promising(){
                 return false;
             }
         }else{
-            if((ans[i][Cigarets]==m_cigar["Blend"]&&ans[i-1][Beverage]!=m_beverage["water"]&&ans[i-1][Beverage]!=-1)||
+            if((ans[i][Cigarets]==m_cigar["Blend"]&&ans[i-1][Beverage]!=m_beverage["water"]&&ans[i-1][Beverage]!=-1)&&
             
             (ans[i][Cigarets]==m_cigar["Blend"]&&ans[i+1][Beverage]!=m_beverage["water"]&&ans[i+1][Beverage]!=-1)){
                 return false;
@@ -243,6 +240,7 @@ bool promising(){
     }
     return true;
 }  
+
 
 
 bool solution(int people,int property){
@@ -254,6 +252,7 @@ bool solution(int people,int property){
         if(promising()==true){
             int newPeople=(people+1)%Peoples;
             int temp=0;
+            
             if(newPeople==0){
                 temp=1;
             }
@@ -272,15 +271,16 @@ bool solution(int people,int property){
 int main(){
 
     init();
-    //cout<<m_cigar["Blend"]<<endl;
-    //cout<<m_cigar["Blue Master"]<<endl;
-    // if(solution(0,0)){
-    //     for(int i=0;i<arrSize;i++){
-    //         cout<<ans[i][0]<<" ";
-    //     }
-    //     cout<<"ahah"<<endl;
-    // }
+    
     cout<<solution(0,0)<<endl;
+
+    for(int i=0;i<5;i++){
+        for(int t=0;t<5;t++){
+            cout<<ans[i][t]<<" ";
+        }
+        cout<<endl;
+    }
+
 }
 
 //`
