@@ -282,3 +282,239 @@ int main(){
     // }
     cout<<solution(0,0)<<endl;
 }
+
+//`
+#include <iostream>
+
+enum { _ = -1 };
+enum { blue, green, red, white, yellow };
+enum { beer, coffee, milk, tea, water };
+enum { cat, bird, dog, fish, horse };
+enum { Blue_Master, Dunhill, Pall_Mall, Prince, Blend };
+enum { Brit, Dane, German, Norwegian, Swede };
+
+
+
+enum { Color, Beverage, Pet, Cigarets, Nationality };
+const auto PropertiesCount = 5;
+
+// There are five houses.
+const auto HousesCount = 5;
+
+
+int s[HousesCount][PropertiesCount];
+
+bool nextTo(int house, int property, int value)
+{
+  return (house > 0 && (s[house - 1][property] == _ || s[house - 1][property] == value)) ||
+    (house < HousesCount - 1 && (s[house + 1][property] == _ || s[house + 1][property] == value));
+}
+
+bool check()
+{
+  // In the interest of clarity, it must be added that each of
+  // the five houses is painted a different color,
+  // and their inhabitants are of different national extractions, own
+  // different pets, drink different beverages and smoke different brands of American
+  // cigarets [sic]. One other thing: in statement 6, right means your right.
+  for (auto i = 0; i < HousesCount; ++i)
+  {
+    for (auto j = 0; j < PropertiesCount; ++j)
+    {
+      for (auto k = i + 1; k < HousesCount; ++k)
+        if (s[i][j] != _ && s[k][j] != _ && s[i][j] == s[k][j])
+          return false;
+    }
+  }
+
+  // The Englishman lives in the red house. 1번
+  for (auto i = 0; i < HousesCount; ++i)
+    if (s[i][Nationality] == Brit && s[i][Color] != red && s[i][Color] != _)
+      return false;
+  // The Spaniard owns the dog. 2번
+  for (auto i = 0; i < HousesCount; ++i)
+    if (s[i][Nationality] == Swede && s[i][Pet] != dog && s[i][Pet] != _)
+      return false;
+  //3번
+  for (auto i = 0; i < HousesCount; ++i)
+    if (s[i][Nationality] == Dane && s[i][Beverage] != tea && s[i][Beverage] != _)
+      return false;
+  // 하얀색 집 왼쪽에 초록색 집이 있다.
+  // 초록색 집 오른쪽에 하얀색 집이  잇음 4번
+  for (auto i = 0; i < HousesCount; ++i)
+    if ((i == 4 && s[i][Color] == green) || (s[i][Color] == green && s[i + 1][Color] != white && s[i + 1][Color] != _))
+      return false;
+
+
+  // Coffee is drunk in the green house. 5번
+  for (auto i = 0; i < HousesCount; ++i)
+    if (s[i][Color] == green && s[i][Beverage] != coffee && s[i][Beverage] != _)
+      return false;
+  
+  
+  
+  // The Old Gold smoker owns snails.6번
+  for (auto i = 0; i < HousesCount; ++i)
+    if (s[i][Cigarets] == Pall_Mall && s[i][Pet] != bird && s[i][Pet] != _)
+      return false;
+  // Kools are smoked in the yellow house. 7번
+  for (auto i = 0; i < HousesCount; ++i)
+    if (s[i][Cigarets] == Dunhill && s[i][Color] != yellow && s[i][Color] != _)
+      return false;
+  // Milk is drunk in the middle house. 8번
+  if (s[2][Beverage] != milk && s[2][Beverage] != _)
+    return false;
+  // The Norwegian lives in the first house. 9번
+  if (s[0][Nationality] != Norwegian && s[0][Nationality] != _)
+    return false;
+  // The man who smokes Chesterfields lives in the house next to the man with the fox.
+  // 10번
+  for (auto i = 0; i < HousesCount; ++i)
+    if (s[i][Cigarets] == Blend && !nextTo(i, Pet, cat))
+      return false;
+  
+  // Kools are smoked in the house next to the house where the horse is kept.
+  // 11번
+  for (auto i = 0; i < HousesCount; ++i)
+    if (s[i][Cigarets] == Dunhill && !nextTo(i, Pet, horse))
+      return false;
+  // The Lucky Strike smoker drinks orange juice.
+  //12 번
+  for (auto i = 0; i < HousesCount; ++i)
+    if (s[i][Cigarets] == Blue_Master && s[i][Beverage] != beer && s[i][Beverage] != _)
+      return false;
+  // The Japanese smokes Parliaments.
+  //13번
+  for (auto i = 0; i < HousesCount; ++i)
+    if (s[i][Nationality] == German && s[i][Cigarets] != Prince && s[i][Cigarets] != _)
+      return false;
+  // The Norwegian lives next to the blue house.
+  //14번
+  for (auto i = 0; i < HousesCount; ++i)
+    if (s[i][Nationality] == Norwegian && !nextTo(i, Color, blue))
+      return false;
+
+  //15번
+  for(auto i=0;i<HousesCount;i++)
+    if(s[i][Cigarets]==Blend&&!nextTo(i,Beverage,water))
+      return false;
+  
+
+
+  return true;
+}
+
+bool findSolution(int house, int property)
+{
+  auto oldValue = s[house][property];
+  std::cout<<house<<" "<<property<<" "<<oldValue<<std::endl;
+  for (auto i = 0; i < 5; i++)
+  {
+    s[house][property] = i;
+    if (check())
+    { 
+      
+      auto newHouse = (house + 1) % HousesCount;
+      //무조건 0을 반환한다..
+      // newHouse 가 0 이라면 + 1 해줌
+      // newHouse 가 0이 아니라면 +0 해줌
+      auto newProperty = property + (newHouse == 0 ? 1 : 0);
+      // int temp=0;
+      // if(newHouse==0){
+      //   temp=1;
+      // }
+      // int newProperty=property+temp;
+      if (newProperty >= PropertiesCount || findSolution(newHouse, newProperty))
+        return true;
+    }
+  }
+  s[house][property] = oldValue;
+  return false;
+}
+
+#define STR(x) case x: return #x
+
+std::string toColor(int value)
+{
+  switch (value)
+  {
+    STR(red);
+    STR(green);
+    STR(white);
+    STR(yellow);
+    STR(blue);
+  }
+  return "?";
+}
+
+std::string toBeverage(int value)
+{
+  switch (value)
+  {
+    STR(coffee);
+    STR(tea);
+    STR(milk); 
+    STR(water);
+    STR(beer);
+  }
+  return "?";
+}
+
+std::string toPet(int value)
+{
+  switch (value)
+  {
+    STR(dog);
+    STR(cat);
+    STR(bird);
+    STR(fish);
+    STR(horse);
+  }
+  return "?";
+}
+
+std::string toCigarets(int value)
+{
+  switch (value)
+  {
+    STR(Blue_Master);
+    STR(Dunhill);
+    STR(Pall_Mall);
+    STR(Prince);
+    STR(Blend);
+  }
+  return "?";
+}
+
+std::string toNationality(int value)
+{
+  switch (value)
+  {
+    STR(Brit);
+    STR(Dane);
+    STR(German);
+    STR(Norwegian);
+    STR(Swede);
+  }
+  return "?";
+}
+
+// Now, who drinks water? Who owns the zebra?
+int main()
+{
+  for (auto p = 0; p < PropertiesCount; ++p)
+    for (auto h = 0; h < HousesCount; ++h)
+      s[h][p] = _;
+  if (findSolution(0, 0))
+  {
+    for (auto h = 0; h < HousesCount; ++h)
+      std::cout << h + 1 << " " <<
+        toColor(s[h][Color]) << " " <<
+        toBeverage(s[h][Beverage]) << " " <<
+        toPet(s[h][Pet]) << " " <<
+        toCigarets(s[h][Cigarets]) << " " <<
+        toNationality(s[h][Nationality]) << "\n";
+  }
+  else
+    std::cout << "No solution\n";
+}
