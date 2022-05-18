@@ -1,5 +1,6 @@
 #include<iostream>
 #include<map>
+#include<vector>
 using namespace std;
 
 
@@ -265,6 +266,24 @@ bool solution(int people,int property){
     }
     ans[people][property]=oldValue;
     return false;
+}
+
+
+int main(){
+
+    init();
+    
+    cout<<solution(0,0)<<endl;
+
+    for(int i=0;i<5;i++){
+        vector<int> v;
+        for(int t=0;t<5;t++){
+            v.push_back(ans[i][t]);
+        }
+        cout<<house[v[0]]<<" "<<beverage[v[1]]<<" "<<pet[v[2]]<<" "<<cigar[v[3]]<<" "<<nationality[v[4]];
+        cout<<endl;
+    }
+
 }
 
 
