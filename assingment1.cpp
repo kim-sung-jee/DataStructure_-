@@ -253,9 +253,13 @@ bool solution(int people,int property){
         
         if(promising()==true){
             int newPeople=(people+1)%Peoples;
-            int newProperty=property+(newPeople==0?1:0);
-            
+            int temp=0;
+            if(newPeople==0){
+                temp=1;
+            }
+            int newProperty=property+temp;
             if(newProperty>=Properties||solution(newPeople,newProperty)){
+                
                 return true;
             }
         }
