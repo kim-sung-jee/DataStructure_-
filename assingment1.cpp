@@ -29,7 +29,7 @@ int ans[Peoples][Properties];
 
 
 
-void init(){
+void init(){ 
     
     for(int i=0;i<arrSize;i++){
         m_house.insert({house[i],i});
